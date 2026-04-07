@@ -37,7 +37,8 @@ ollama-pull:
   image: ollama/ollama:latest
   container_name: wanderlust-ollama-pull
   depends_on:
-    condition: service_healthy
+    ollama:
+      condition: service_healthy
   entrypoint: ["/bin/sh", "-c"]
   command:
     - |
