@@ -18,26 +18,36 @@ services:
 
 # Defining Ollama container
   ollama:
-    image: ollama/ollama
+    image: ollama/ollama:latest
     container_name: wanderlust-ollama
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
-# In Ollama container we need to install a model: tinyllama
-    command: |
-      ollama server &
-      sleep 5
-      ollama pull tinyllama
-      wait
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      test: ["CMD-SHELL", "ollama list || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 5
+      retries: 13
       start_period: 60s
     networks:
       - wanderlust-net  
+# One time job -Pull tinyllama model
+ollama-pull:
+  image: ollama/ollama:latest
+  container_name: wanderlust-ollama-pull
+  depends_on:
+    condition: service_healthy
+  entrypoint: ["/bin/sh", "-c"]
+  command:
+    - |
+      ollama pull tinyllama
+  environment:
+    - OLLAMA_HOST=http:11434
+  networks:
+    - wanderlust-net
+  restart: "no"
+
 
 # Defining WanderlustAI interegated APP container
   webapp:
@@ -61,8 +71,11 @@ services:
         condition: service_healthy
       ollama:
         condition: service_healthy
+      ollama-pull:
+        condition: service_completed_successfully
     networks:
       - wanderlust-net   
+
 # Defining networks
 networks:
   wanderlust-net:
