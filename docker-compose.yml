@@ -67,7 +67,6 @@ services:
 networks:
   wanderlust-net:
     driver: bridge
-    networks:
 
 # Defining volumes
 volumes:
