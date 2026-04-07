@@ -1,0 +1,79 @@
+services:
+
+# Defining Mongo DB container
+mongo:
+  image: mongo;7
+  container_name: wanderlust-mongo
+  ports:
+    - "27017:27017"
+  volumes:
+    - mongo_data:/data/db
+  healthcheck:
+    test: ["CMD", "monogosh", "--eval", "db.adminCommand('ping')"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 30s
+  networks:
+    - wanderlust-net
+
+# Defining Ollama container
+ollama:
+  image: ollama/ollama
+  container_name: wanderlust-ollama
+  ports:
+    - "11434:11434"
+  volumes:
+    - ollama_data:/root/.ollama
+
+# In Ollama container we need to install a model: tinyllama
+  command:
+    - |
+      ollama server &
+      sleep 5
+      ollama pull tinyllama
+      wait
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+    interval: 30s
+    timeout: 10s
+    retries: 5
+    start_period: 60s
+  networks:
+    - wanderlust-net  
+
+# Defining WanderlustAI interegated APP container
+webapp:
+  build: 
+    context: .
+    dockerfile: Dockerfile
+  container_name: wanderlust-app
+  restart: unless-stopped
+  ports:
+    - "8080:8080"
+  env_file:
+    - .env
+  environment:
+    # as Define in the READEME and .envfile
+    # override DB url to use mongo container
+    ATLASDB_URL: mongodb://mongo:27017/wanderlust
+    # point to ollama container
+    OLLAMA_URL: http://ollama:11434
+    depends_on:
+      mongo:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+  networks:
+    - wanderlust-net   
+
+# Defining networks
+networks:
+  wanderlust-net:
+    driver: bridge
+
+# Defining volumes
+volumes:
+  ollama_data:
+  mongo_data:
+  
