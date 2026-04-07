@@ -29,6 +29,11 @@ USER appuser
 
 EXPOSE 8080
 
+# Health check optional
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD wget -qO- http://localhost:8080 || exit 1
+
+
 CMD ["node", "app.js"]
 
 
