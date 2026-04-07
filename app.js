@@ -13,6 +13,10 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.models.js");
 
+
+// ─── ADD THIS in app.js ───────────────────────────────────────────
+// Place this line near your other route requires at the top
+const aiRouter = require("./routes/ai");
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
@@ -23,6 +27,7 @@ app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // ← ADD THIS
 
 const dbUrl = process.env.ATLASDB_URL;
 
@@ -86,6 +91,9 @@ app.get("/", (req, res) => {
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
+// ─── ADD THIS with your other app.use() route registrations ───────
+// Place after your existing routes (listing, review, user)
+app.use("/ai", aiRouter);
 
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));
