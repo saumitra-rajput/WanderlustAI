@@ -96,6 +96,11 @@ Wanderlust/
 
 ## 🚀 Running Locally with Docker
 
+Recommended to read [NOTES](/notes.md)
+
+IMP Read the file after admin login to feed the DATABASE [owner-setup](/owner-setup.md)
+owner details error.
+
 ### Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
 - 4GB+ RAM available (for TinyLlama)

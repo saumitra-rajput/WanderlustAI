@@ -23,8 +23,8 @@ services:
     image: ollama/ollama:latest
     container_name: wanderlust-ollama
     restart: unless-stopped
-    ports:
-      - "11434:11434"
+      #    ports:
+      # - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
     healthcheck:
