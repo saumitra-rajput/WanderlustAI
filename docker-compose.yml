@@ -1,8 +1,10 @@
 services:
+
 # Defining Mongo DB container
   mongo:
     image: mongo:7
     container_name: wanderlust-mongo
+    restart: unless-stopped
     ports:
       - "27017:27017"
     volumes:
@@ -12,7 +14,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      start_period: 20s
     networks:
       - wanderlust-net
 
@@ -20,37 +22,39 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: wanderlust-ollama
+    restart: unless-stopped
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
     healthcheck:
       test: ["CMD-SHELL", "ollama list || exit 1"]
-      interval: 30s
+      interval: 15s
       timeout: 10s
       retries: 13
-      start_period: 60s
+      start_period: 40s
     networks:
       - wanderlust-net  
 # One time job -Pull tinyllama model
-ollama-pull:
-  image: ollama/ollama:latest
-  container_name: wanderlust-ollama-pull
-  depends_on:
-    condition: service_healthy
-  entrypoint: ["/bin/sh", "-c"]
-  command:
-    - |
-      ollama pull tinyllama
-  environment:
-    - OLLAMA_HOST=http:11434
-  networks:
-    - wanderlust-net
-  restart: "no"
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: wanderlust-ollama-pull
+    depends_on:
+      ollama:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama pull tinyllama
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    networks:
+      - wanderlust-net
+    restart: "no"
 
 
 # Defining WanderlustAI interegated APP container
-  webapp:
+  app:
     build: 
       context: .
       dockerfile: Dockerfile
