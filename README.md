@@ -163,11 +163,16 @@ db.listings.insertMany([
 "
 ```
 
+
 ### 5. Open the app
 
 ```
 http://localhost:8080/listings
 ```
+
+### For First time user Login setup
+
+Read the file [owner-setup](/owner-setup.md)
 
 ---
 
