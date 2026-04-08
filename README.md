@@ -133,6 +133,17 @@ ATLASDB_URL=mongodb://mongo:27017/wanderlust
 OLLAMA_URL=http://ollama:11434
 ```
 
+### turn around dummy 
+```
+CLOUD_NAME=REMOVEMEdummycloudREMOVEME
+CLOUD_API_KEY=REMOVEME123456789012345REMOVEME
+CLOUD_API_SECRET=REMOVEMEabcdefghijklmnopqrstuvwxyzABCDREMOVEME
+MAP_TOKEN=REMOVEMEpk.eyJ1IjoiZHVtbXkiLCJhIjoiY2xkdW1teWR1bW15ZHVtbXlkdW15ZHVtbXkifQ.dummy_signature_here_1234567REMOVEME
+SECRET=REMOVEMEwanderlust_local_secret_2024REMOVEME
+ATLASDB_URL=mongodb://mongo:27017/wanderlust
+OLLAMA_URL=http://ollama:11434
+```
+
 ### 3. Start all services
 
 ```bash
